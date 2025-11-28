@@ -1,9 +1,9 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+# import cloudinary
+# import cloudinary.uploader
+# import cloudinary.api
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',  
     'rest_framework',
     'corsheaders',
     'cloudinary',
@@ -74,13 +75,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Cloudinary
-cloudinary.config( 
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'), 
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
-)
+# # Cloudinary
+# cloudinary.config( 
+#     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+#     api_key=os.getenv('CLOUDINARY_API_KEY'), 
+#     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+#     secure=True
+# )
 
 CORS_ALLOW_ALL_ORIGINS = True
 

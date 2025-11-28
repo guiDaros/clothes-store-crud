@@ -1,5 +1,4 @@
 from django.db import models
-from cloudinary.models import CloudinaryField
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
@@ -29,7 +28,7 @@ class Produto(models.Model):
     nome = models.CharField(max_length=200)
     descricao = models.TextField(blank=True)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
-    imagem = CloudinaryField('imagem', folder='loja/produtos')
+    imagem = models.URLField(blank=True)  # URL simples
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True)
     destaque = models.BooleanField(default=False)
@@ -42,7 +41,7 @@ class Produto(models.Model):
         return self.nome
 
 class Banner(models.Model):
-    imagem = CloudinaryField('imagem', folder='loja/banners')
+    imagem = models.URLField(blank=True)  # URL simples
     link = models.CharField(max_length=200, blank=True)
     ordem = models.IntegerField(default=0)
     ativo = models.BooleanField(default=True)
@@ -53,7 +52,7 @@ class Banner(models.Model):
 class Pedido(models.Model):
     nome_cliente = models.CharField(max_length=100)
     data_hora = models.DateTimeField(auto_now_add=True)
-    itens = models.JSONField()  # {produtos: [{id, nome, preco, quantidade}], total}
+    itens = models.JSONField()
     telefone = models.CharField(max_length=20, blank=True)
     
     class Meta:

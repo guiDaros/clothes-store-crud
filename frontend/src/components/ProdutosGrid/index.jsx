@@ -9,28 +9,69 @@ import {
   ProdutoPreco, 
   BotaoAdicionar 
 } from './styles';
+import { useProdutos } from '../../hooks/useProdutos';
+import { useCarrinho } from '../../context/CarrinhoContext';
 
 function ProdutosGrid() {
-  // Dados mockados temporários
-  const produtosMock = [
-    { id: 1, nome: 'Camiseta Básica Preta', preco: 'R$ 49,90' },
-    { id: 2, nome: 'Calça Jeans Slim', preco: 'R$ 129,90' },
-    { id: 3, nome: 'Tênis Esportivo', preco: 'R$ 199,90' },
-    { id: 4, nome: 'Moletom com Capuz', preco: 'R$ 89,90' },
-    { id: 5, nome: 'Blusa de Frio', preco: 'R$ 79,90' },
-    { id: 6, nome: 'Shorts Esportivo', preco: 'R$ 59,90' },
-  ];
+  const { produtos, loading, error } = useProdutos(false);
+  const { adicionarAoCarrinho } = useCarrinho();
+
+  const handleAdicionarCarrinho = (produto) => {
+    adicionarAoCarrinho(produto);
+    alert(`${produto.nome} adicionado ao carrinho!`);
+  };
+
+  if (loading) {
+    return (
+      <Container>
+        <Titulo>Todos os Produtos</Titulo>
+        <div>Carregando produtos...</div>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Titulo>Todos os Produtos</Titulo>
+        <div>{error}</div>
+      </Container>
+    );
+  }
+
+  if (produtos.length === 0) {
+    return (
+      <Container>
+        <Titulo>Todos os Produtos</Titulo>
+        <div>Nenhum produto cadastrado</div>
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <Titulo>Todos os Produtos</Titulo>
       <Grid>
-        {produtosMock.map(produto => (
+        {produtos.map(produto => (
           <ProdutoCard key={produto.id}>
-            <ProdutoImagem>Imagem</ProdutoImagem>
+            <ProdutoImagem>
+              {produto.imagem ? (
+                <img 
+                  src={produto.imagem} 
+                  alt={produto.nome}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }}
+                />
+              ) : (
+                'Imagem'
+              )}
+            </ProdutoImagem>
             <ProdutoNome>{produto.nome}</ProdutoNome>
-            <ProdutoPreco>{produto.preco}</ProdutoPreco>
-            <BotaoAdicionar>Adicionar ao Carrinho</BotaoAdicionar>
+            <ProdutoPreco>R$ {produto.preco}</ProdutoPreco>
+            <BotaoAdicionar 
+              onClick={() => handleAdicionarCarrinho(produto)}
+            >
+              Adicionar ao Carrinho
+            </BotaoAdicionar>
           </ProdutoCard>
         ))}
       </Grid>

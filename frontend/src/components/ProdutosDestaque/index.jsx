@@ -9,9 +9,16 @@ import {
   ProdutoPreco 
 } from './styles';
 import { useProdutos } from '../../hooks/useProdutos';
+import { useCarrinho } from '../../context/CarrinhoContext.jsx';
 
 function ProdutosDestaque() {
-  const { produtos, loading, error } = useProdutos(true); // true = apenas destaques
+  const { produtos, loading, error } = useProdutos(true);
+  const { adicionarAoCarrinho } = useCarrinho();
+
+  const handleAdicionarCarrinho = (produto) => {
+    adicionarAoCarrinho(produto);
+    alert(`${produto.nome} adicionado ao carrinho!`);
+  };
 
   if (loading) {
     return (
@@ -59,6 +66,19 @@ function ProdutosDestaque() {
             </ProdutoImagem>
             <ProdutoNome>{produto.nome}</ProdutoNome>
             <ProdutoPreco>R$ {produto.preco}</ProdutoPreco>
+            <button 
+              onClick={() => handleAdicionarCarrinho(produto)}
+              style={{
+                background: '#2c5aa0',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Adicionar
+            </button>
           </ProdutoCard>
         ))}
       </ListaProdutos>

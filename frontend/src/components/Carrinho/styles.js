@@ -153,3 +153,27 @@ export const BotaoFinalizar = styled.button`
     cursor: not-allowed;
   }
 `;
+
+// Adicione estas linhas no final do arquivo styles.js
+export const FormGroup = styled.div`
+  margin-bottom: 1rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+`;
+
+export const CampoNome = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #2c5aa0;
+  }
+`;

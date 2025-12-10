@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 
-export const useProdutos = (destaque = false) => {
+export const useProdutosFiltrados = (categoriaId = null, marcaId = null) => {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,9 +12,11 @@ export const useProdutos = (destaque = false) => {
         setLoading(true);
         setError(null);
         
-        const response = destaque 
-          ? await apiService.getProdutosDestaque()
-          : await apiService.getProdutos();
+        const params = {};
+        if (categoriaId) params.categoria = categoriaId;
+        if (marcaId) params.marca = marcaId;
+        
+        const response = await apiService.getProdutos(params);
         
         if (!response || !response.data) {
           throw new Error('Resposta da API inválida');
@@ -30,14 +32,14 @@ export const useProdutos = (destaque = false) => {
         }
         
         if (!Array.isArray(dados)) {
-          console.warn('Dados de produtos não são um array:', dados);
+          console.warn('Dados de produtos filtrados não são um array:', dados);
           dados = [];
         }
         
         setProdutos(dados);
         
       } catch (err) {
-        console.error('Erro ao carregar produtos:', err);
+        console.error('Erro ao carregar produtos filtrados:', err);
         setError(err.message || 'Erro ao carregar produtos');
         setProdutos([]);
       } finally {
@@ -46,7 +48,7 @@ export const useProdutos = (destaque = false) => {
     };
 
     carregarProdutos();
-  }, [destaque]);
+  }, [categoriaId, marcaId]);
 
   return { produtos, loading, error };
 };

@@ -57,3 +57,10 @@ export const BotaoAdicionar = styled.button`
     background: #1e3d6f;
   }
 `;
+
+export const Marca = styled.p`
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+  font-style: italic;
+`;

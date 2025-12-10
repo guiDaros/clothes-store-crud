@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Categoria, Produto, Tag, Banner, Pedido
+from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja    # Adicione Marca
+
+class MarcaAdmin(admin.ModelAdmin):
+    list_display = ['nome']
+    search_fields = ['nome']
 
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ['nome', 'parent', 'get_nivel']
@@ -7,8 +11,8 @@ class CategoriaAdmin(admin.ModelAdmin):
     search_fields = ['nome']
 
 class ProdutoAdmin(admin.ModelAdmin):
-    list_display = ['nome', 'preco', 'categoria', 'destaque', 'ativo']
-    list_filter = ['categoria', 'tags', 'destaque', 'ativo']
+    list_display = ['nome', 'preco', 'categoria', 'marca', 'destaque', 'ativo']  # Adicione marca
+    list_filter = ['categoria', 'marca', 'tags', 'destaque', 'ativo']  # Adicione marca
     search_fields = ['nome', 'descricao']
     filter_horizontal = ['tags']
 
@@ -27,9 +31,18 @@ class PedidoAdmin(admin.ModelAdmin):
     readonly_fields = ['data_hora']
 
     def has_add_permission(self, request):
-        return False  # Pedidos são criados apenas via API
+        return False
+    
+class ConfiguracaoLojaAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False  # Só permite uma configuração
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 # Registrar os models no admin
+admin.site.register(ConfiguracaoLoja, ConfiguracaoLojaAdmin)
+admin.site.register(Marca, MarcaAdmin) 
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(Produto, ProdutoAdmin)
 admin.site.register(Tag, TagAdmin)

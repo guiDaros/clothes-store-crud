@@ -1,5 +1,15 @@
 from rest_framework import serializers
-from .models import Categoria, Produto, Tag, Banner, Pedido
+from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja
+
+class ConfiguracaoLojaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfiguracaoLoja
+        fields = ['logo_url', 'cor_principal', 'modo_escuro', 'telefone_whatsapp', 'endereco', 'email']
+
+class MarcaSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = Marca
+        fields = ['id', 'nome']
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:

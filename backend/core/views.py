@@ -2,8 +2,20 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Categoria, Produto, Tag, Banner, Pedido
+from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja  
 from .serializers import *
+
+class ConfiguracaoLojaViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ConfiguracaoLoja.objects.filter(id=1)
+    serializer_class = ConfiguracaoLojaSerializer
+    
+    def get_queryset(self):
+        config, _ = ConfiguracaoLoja.objects.get_or_create(id=1)
+        return ConfiguracaoLoja.objects.filter(id=1)
+
+class MarcaViewSet(viewsets.ReadOnlyModelViewSet):  
+    queryset = Marca.objects.all()
+    serializer_class = MarcaSerializer
 
 class CategoriaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Categoria.objects.filter(parent__isnull=True)
@@ -13,7 +25,7 @@ class ProdutoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Produto.objects.filter(ativo=True)
     serializer_class = ProdutoSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['categoria', 'tags', 'destaque']
+    filterset_fields = ['categoria', 'marca', 'tags', 'destaque']  
     
     @action(detail=False, methods=['get'])
     def buscar(self, request):

@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja    # Adicione Marca
+from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja, Tamanho
+
+class TamanhoAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'ordem']
+    list_editable = ['ordem']
+
 
 class MarcaAdmin(admin.ModelAdmin):
     list_display = ['nome']

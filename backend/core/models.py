@@ -5,6 +5,17 @@ class Marca(models.Model):
     
     class Meta:
         verbose_name_plural = "Marcas"
+        ordering = ['nome']
+
+    def __str__(self):
+        return self.nome
+    
+class Tamanho(models.Model):
+    nome = models.CharField(max_length=10)  
+    ordem = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['ordem']
     
     def __str__(self):
         return self.nome
@@ -15,7 +26,8 @@ class Categoria(models.Model):
     
     class Meta:
         verbose_name_plural = "Categorias"
-    
+        ordering = ['nome']
+
     def __str__(self):
         return self.nome
     
@@ -39,13 +51,17 @@ class Produto(models.Model):
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     imagem = models.URLField(blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True, blank=True)  # NOVO CAMPO
+    marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    tamanhos = models.ManyToManyField(Tamanho, blank=True)  # Certifique-se que existe
     destaque = models.BooleanField(default=False)
     ativo = models.BooleanField(default=True)
+    # Adicione se quiser data de criação:
+    # data_criacao = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         verbose_name_plural = "Produtos"
+        ordering = ['-id']
     
     def __str__(self):
         return self.nome
@@ -82,7 +98,8 @@ class ConfiguracaoLoja(models.Model):
     
     class Meta:
         verbose_name_plural = "Configurações da Loja"
-    
+        ordering = ['id']
+
     def __str__(self):
         return "Configurações da Loja"
     

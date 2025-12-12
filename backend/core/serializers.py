@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja
+from .models import Marca, Categoria, Produto, Tag, Banner, Pedido, ConfiguracaoLoja, Tamanho
 
 class ConfiguracaoLojaSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConfiguracaoLoja
         fields = ['logo_url', 'cor_principal', 'modo_escuro', 'telefone_whatsapp', 'endereco', 'email']
+
+class TamanhoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tamanho
+        fields = ['id', 'nome']
 
 class MarcaSerializer(serializers.ModelSerializer): 
     class Meta:
@@ -29,11 +34,26 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 class ProdutoSerializer(serializers.ModelSerializer):
     categoria_nome = serializers.CharField(source='categoria.nome', read_only=True)
+    marca_nome = serializers.CharField(source='marca.nome', read_only=True)  # Já existe
     tags = TagSerializer(many=True, read_only=True)
+    tamanhos = TamanhoSerializer(many=True, read_only=True)
     
     class Meta:
         model = Produto
-        fields = ['id', 'nome', 'descricao', 'preco', 'imagem', 'categoria', 'categoria_nome', 'tags', 'destaque']
+        fields = [
+            'id', 
+            'nome', 
+            'descricao', 
+            'preco', 
+            'imagem', 
+            'categoria', 
+            'categoria_nome',  
+            'marca', 
+            'marca_nome',     
+            'tags', 
+            'tamanhos', 
+            'destaque'
+        ]
 
 class BannerSerializer(serializers.ModelSerializer):
     class Meta:

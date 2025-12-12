@@ -5,25 +5,33 @@ const CarrinhoContext = createContext();
 const carrinhoReducer = (state, action) => {
   switch (action.type) {
     case 'ADICIONAR_PRODUTO': {
-      const existingItem = state.find(item => item.id === action.produto.id);
+      const produtoComIdUnico = action.produto.tamanho 
+        ? `${action.produto.id}-${action.produto.tamanho}`
+        : action.produto.id.toString();
+      
+      const existingItem = state.find(item => item.idUnico === produtoComIdUnico);
       
       if (existingItem) {
         return state.map(item =>
-          item.id === action.produto.id
+          item.idUnico === produtoComIdUnico
             ? { ...item, quantidade: item.quantidade + 1 }
             : item
         );
       }
       
-      return [...state, { ...action.produto, quantidade: 1 }];
+      return [...state, { 
+        ...action.produto, 
+        idUnico: produtoComIdUnico,
+        quantidade: 1 
+      }];
     }
       
     case 'REMOVER_PRODUTO':
-      return state.filter(item => item.id !== action.produtoId);
+      return state.filter(item => item.idUnico !== action.produtoIdUnico);
       
     case 'ATUALIZAR_QUANTIDADE':
       return state.map(item =>
-        item.id === action.produtoId
+        item.idUnico === action.produtoIdUnico
           ? { ...item, quantidade: action.quantidade }
           : item
       );
@@ -43,12 +51,16 @@ export const CarrinhoProvider = ({ children }) => {
     dispatch({ type: 'ADICIONAR_PRODUTO', produto });
   };
 
-  const removerDoCarrinho = (produtoId) => {
-    dispatch({ type: 'REMOVER_PRODUTO', produtoId });
+  const removerDoCarrinho = (produtoIdUnico) => {
+    dispatch({ type: 'REMOVER_PRODUTO', produtoIdUnico });
   };
 
-  const atualizarQuantidade = (produtoId, quantidade) => {
-    dispatch({ type: 'ATUALIZAR_QUANTIDADE', produtoId, quantidade });
+  const atualizarQuantidade = (produtoIdUnico, quantidade) => {
+    if (quantidade < 1) {
+      removerDoCarrinho(produtoIdUnico);
+      return;
+    }
+    dispatch({ type: 'ATUALIZAR_QUANTIDADE', produtoIdUnico, quantidade });
   };
 
   const limparCarrinho = () => {

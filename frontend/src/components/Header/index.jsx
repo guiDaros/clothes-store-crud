@@ -14,7 +14,6 @@ import {
   MenuFechar,
   MenuItens,
   DesktopMenu,
-  DesktopMenuItem,
   DesktopIcons
 } from './styles';
 import { useCarrinho } from '../../context/CarrinhoContext';
@@ -22,25 +21,41 @@ import { useTema } from '../../context/TemaContext';
 import { useCategorias } from '../../hooks/useCategorias';
 import Carrinho from '../Carrinho';
 import MenuCategorias from '../MenuCategorias';
+import DropdownCategorias from './DropdownCategorias';
 
 function Header() {
   const { totalItens } = useCarrinho();
   const { configuracao } = useTema();
-  const { categoriasHierarquia } = useCategorias();
+  const { categoriasHierarquia, loading } = useCategorias(); // ← loading adicionado
   const [menuAberto, setMenuAberto] = useState(false);
   const [carrinhoAberto, setCarrinhoAberto] = useState(false);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
 
   const handleSelecionarCategoria = (categoriaId) => {
     setCategoriaSelecionada(categoriaId);
-    // Aqui você pode navegar para a página de produtos filtrados
+    
+    // NAVEGAÇÃO PROFISSIONAL (Escolha uma opção):
+    
+    // Opção 1: Navegação simples (mais comum em e-commerce)
+    if (categoriaId === null) {
+      window.location.href = '/produtos'; // Todos os produtos
+    } else {
+      window.location.href = `/produtos?categoria=${categoriaId}`;
+    }
+    
+    // Opção 2: Se estiver usando React Router
+    // const navigate = useNavigate();
+    // if (categoriaId === null) {
+    //   navigate('/produtos');
+    // } else {
+    //   navigate(`/produtos?categoria=${categoriaId}`);
+    // }
+    
     console.log('Categoria selecionada:', categoriaId);
   };
 
-  // Para desktop: pega apenas categorias principais
-  const categoriasPrincipais = categoriasHierarquia
-    .filter(cat => !cat.parent)
-    .slice(0, 6); // Limita a 6 para não ficar muito largo
+  // DEBUG: Verifique os dados
+  console.log('Categorias hierárquicas:', categoriasHierarquia);
 
   return (
     <>
@@ -52,33 +67,50 @@ function Header() {
         )}
         
         <DesktopMenu>
-          <DesktopMenuItem 
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              handleSelecionarCategoria(null);
-            }}
-          >
-            Todos
-          </DesktopMenuItem>
-          {categoriasPrincipais.map((categoria) => (
-            <DesktopMenuItem 
-              key={categoria.id}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleSelecionarCategoria(categoria.id);
-              }}
-              style={{
-                color: categoriaSelecionada === categoria.id 
-                  ? 'var(--cor-principal)' 
-                  : 'var(--cor-texto)',
-                fontWeight: categoriaSelecionada === categoria.id ? '600' : '500'
-              }}
-            >
-              {categoria.nome}
-            </DesktopMenuItem>
-          ))}
+          {!loading && categoriasHierarquia.length > 0 ? (
+            // RENDERIZAÇÃO COM DROPDOWN
+            categoriasHierarquia.map((categoria) => {
+              // "Todos" sem dropdown
+              if (categoria.id === null) {
+                return (
+                  <a 
+                    key="todos"
+                    href="/produtos"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleSelecionarCategoria(null);
+                    }}
+                    style={{
+                      color: categoriaSelecionada === null 
+                        ? 'var(--cor-principal)' 
+                        : 'var(--cor-texto)',
+                      fontWeight: categoriaSelecionada === null ? '600' : '500',
+                      textDecoration: 'none',
+                      padding: '0.5rem 1rem',
+                      fontSize: '0.95rem'
+                    }}
+                  >
+                    Todos
+                  </a>
+                );
+              }
+              
+              // Categorias com dropdown
+              return (
+                <DropdownCategorias
+                  key={categoria.id}
+                  categoria={categoria}
+                  onSelecionarCategoria={handleSelecionarCategoria}
+                  isMobile={false}
+                />
+              );
+            })
+          ) : (
+            // Loading state
+            <div style={{ padding: '0.5rem 1rem', color: 'var(--cor-texto)' }}>
+              Carregando...
+            </div>
+          )}
         </DesktopMenu>
         
         <IconGroup>

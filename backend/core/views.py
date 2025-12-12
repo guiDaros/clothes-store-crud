@@ -20,24 +20,16 @@ class MarcaViewSet(viewsets.ReadOnlyModelViewSet):
 # SUBSTITUIR a classe CategoriaViewSet atual por esta:
 
 class CategoriaViewSet(viewsets.ReadOnlyModelViewSet):
-    # Retorna todas as categorias, não apenas pais
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     
-    # Nova ação para pegar apenas categorias pai (limitado a 5)
     @action(detail=False, methods=['get'])
     def pais(self, request):
-        # LIMITA A 5 CATEGORIAS PAI como você pediu
+        # APENAS LIMITA A 5 CATEGORIAS PAI
         categorias_pai = Categoria.objects.filter(parent__isnull=True)[:5]
+        
+        # O serializer recursivo já inclui TODA a árvore
         serializer = self.get_serializer(categorias_pai, many=True)
-        return Response(serializer.data)
-    
-    # Ação para pegar subcategorias de uma categoria específica
-    @action(detail=True, methods=['get'])
-    def subcategorias(self, request, pk=None):
-        categoria = self.get_object()
-        subcategorias = categoria.subcategorias.all()
-        serializer = self.get_serializer(subcategorias, many=True)
         return Response(serializer.data)
 
 class ProdutoViewSet(viewsets.ReadOnlyModelViewSet):

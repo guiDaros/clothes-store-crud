@@ -16,6 +16,22 @@ api.interceptors.response.use(
 );
 
 // Serviços da API
+// export const apiService = {
+//   getConfiguracao: () => api.get("/configuracao/"),
+//   getBanners: () => api.get("/banners/"),
+//   getProdutos: (params = {}) => api.get("/produtos/", { params }),
+//   getProdutosDestaque: () =>
+//     api.get("/produtos/", { params: { destaque: true } }),
+//   getMarcas: () => api.get("/marcas/"),
+//   getCategorias: () => api.get("/categorias/"),
+//   getTags: () => api.get("/tags/"),
+//   criarPedido: (pedidoData) => api.post("/pedidos/", pedidoData),
+//   buscarProdutos: (query) =>
+//     api.get("/produtos/buscar/", { params: { q: query } }),
+// };
+
+// Serviços da API - ADICIONAR ESTAS LINHAS:
+
 export const apiService = {
   getConfiguracao: () => api.get("/configuracao/"),
   getBanners: () => api.get("/banners/"),
@@ -23,11 +39,17 @@ export const apiService = {
   getProdutosDestaque: () =>
     api.get("/produtos/", { params: { destaque: true } }),
   getMarcas: () => api.get("/marcas/"),
+  
   getCategorias: () => api.get("/categorias/"),
+  
+  getCategoriasPais: () => api.get("/categorias/pais/"),
+  
   getTags: () => api.get("/tags/"),
   criarPedido: (pedidoData) => api.post("/pedidos/", pedidoData),
   buscarProdutos: (query) =>
     api.get("/produtos/buscar/", { params: { q: query } }),
+  
+  get: (url, config = {}) => api.get(url, config),
 };
 
 export default api;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   DropdownContainer,
   DropdownTrigger,
@@ -16,28 +16,44 @@ const DropdownCategorias = ({
   isMobile = false 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  let timeoutId = null;
 
   // Para mobile: toggle no click
-  // Para desktop: hover abre, mouse leave fecha
   const handleToggle = () => {
     if (isMobile) {
       setIsOpen(!isOpen);
     }
   };
 
+  // Para desktop: hover com delay para fechar
   const handleMouseEnter = () => {
     if (!isMobile) {
+      clearTimeout(timeoutId);
       setIsOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
     if (!isMobile) {
-      setIsOpen(false);
+      // Delay de 300ms para fechar (permite mover mouse entre categorias)
+      timeoutId = setTimeout(() => {
+        if (dropdownRef.current && 
+            !dropdownRef.current.matches(':hover')) {
+          setIsOpen(false);
+        }
+      }, 300);
     }
   };
 
-  // Renderiza subcategorias recursivamente (até 3 níveis)
+  // Cleanup do timeout
+  useEffect(() => {
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // Renderiza subcategorias
   const renderSubcategorias = (subcategorias, nivel = 1) => {
     if (!subcategorias || subcategorias.length === 0) return null;
 
@@ -58,8 +74,6 @@ const DropdownCategorias = ({
                 <ArrowIcon $isOpen={false}>›</ArrowIcon>
               )}
             </SubDropdownMenuItem>
-            
-            {/* Sub-subcategorias (nível 3) */}
             {renderSubcategorias(subcat.subcategorias, nivel + 1)}
           </div>
         ))}
@@ -69,6 +83,7 @@ const DropdownCategorias = ({
 
   return (
     <DropdownContainer
+      ref={dropdownRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -86,8 +101,11 @@ const DropdownCategorias = ({
       </DropdownTrigger>
 
       {isOpen && categoria.subcategorias && categoria.subcategorias.length > 0 && (
-        <DropdownMenu $isMobile={isMobile}>
-          {/* CATEGORIA PAI CLICÁVEL (seu requisito importante) */}
+        <DropdownMenu 
+          $isMobile={isMobile}
+          onMouseEnter={handleMouseEnter}  // IMPORTANTE: mantém aberto
+          onMouseLeave={handleMouseLeave}
+        >
           <ParentLink
             $isMobile={isMobile}
             onClick={() => onSelecionarCategoria(categoria.id)}
@@ -97,7 +115,6 @@ const DropdownCategorias = ({
 
           <Divider $isMobile={isMobile} />
 
-          {/* SUB-CATEGORIAS (níveis 2 e 3) */}
           {renderSubcategorias(categoria.subcategorias)}
         </DropdownMenu>
       )}

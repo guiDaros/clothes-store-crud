@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { 
+import React, { useState } from "react";
+import {
   HeaderContainer,
   Logo,
   LogoImagem,
@@ -14,14 +14,14 @@ import {
   MenuFechar,
   MenuItens,
   DesktopMenu,
-  DesktopIcons
-} from './styles';
-import { useCarrinho } from '../../context/CarrinhoContext';
-import { useTema } from '../../context/TemaContext';
-import { useCategorias } from '../../hooks/useCategorias';
-import Carrinho from '../Carrinho';
-import MenuCategorias from '../MenuCategorias';
-import DropdownCategorias from './DropdownCategorias';
+  DesktopIcons,
+} from "./styles";
+import { useCarrinho } from "../../context/CarrinhoContext";
+import { useTema } from "../../context/TemaContext";
+import { useCategorias } from "../../hooks/useCategorias";
+import Carrinho from "../Carrinho";
+import MenuCategorias from "../MenuCategorias";
+import DropdownCategorias from "./DropdownCategorias";
 
 function Header() {
   const { totalItens } = useCarrinho();
@@ -32,17 +32,12 @@ function Header() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
 
   const handleSelecionarCategoria = (categoriaId) => {
-    setCategoriaSelecionada(categoriaId);
-    
-    // NAVEGAÇÃO PROFISSIONAL (Escolha uma opção):
-    
-    // Opção 1: Navegação simples (mais comum em e-commerce)
     if (categoriaId === null) {
-      window.location.href = '/produtos'; // Todos os produtos
+      window.location.href = "/produtos"; // Todos os produtos
     } else {
       window.location.href = `/produtos?categoria=${categoriaId}`;
     }
-    
+
     // Opção 2: Se estiver usando React Router
     // const navigate = useNavigate();
     // if (categoriaId === null) {
@@ -50,12 +45,7 @@ function Header() {
     // } else {
     //   navigate(`/produtos?categoria=${categoriaId}`);
     // }
-    
-    console.log('Categoria selecionada:', categoriaId);
   };
-
-  // DEBUG: Verifique os dados
-  console.log('Categorias hierárquicas:', categoriasHierarquia);
 
   return (
     <>
@@ -63,17 +53,18 @@ function Header() {
         {configuracao.logo_url ? (
           <LogoImagem src={configuracao.logo_url} alt="Logo" />
         ) : (
-          <Logo style={{ color: 'var(--cor-principal)' }}>MINHA LOJA</Logo>
+          <Logo style={{ color: "var(--cor-principal)" }}>MINHA LOJA</Logo>
         )}
-        
+
         <DesktopMenu>
           {!loading && categoriasHierarquia.length > 0 ? (
             // RENDERIZAÇÃO COM DROPDOWN
             categoriasHierarquia.map((categoria) => {
               // "Todos" sem dropdown
+              // Substitua o bloco do "Todos" por:
               if (categoria.id === null) {
                 return (
-                  <a 
+                  <a
                     key="todos"
                     href="/produtos"
                     onClick={(e) => {
@@ -81,20 +72,18 @@ function Header() {
                       handleSelecionarCategoria(null);
                     }}
                     style={{
-                      color: categoriaSelecionada === null 
-                        ? 'var(--cor-principal)' 
-                        : 'var(--cor-texto)',
-                      fontWeight: categoriaSelecionada === null ? '600' : '500',
-                      textDecoration: 'none',
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.95rem'
+                      color: "var(--cor-texto)", // COR NORMAL
+                      fontWeight: "500", // PESO NORMAL
+                      textDecoration: "none",
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.95rem",
                     }}
                   >
                     Todos
                   </a>
                 );
               }
-              
+
               // Categorias com dropdown
               return (
                 <DropdownCategorias
@@ -107,35 +96,35 @@ function Header() {
             })
           ) : (
             // Loading state
-            <div style={{ padding: '0.5rem 1rem', color: 'var(--cor-texto)' }}>
+            <div style={{ padding: "0.5rem 1rem", color: "var(--cor-texto)" }}>
               Carregando...
             </div>
           )}
         </DesktopMenu>
-        
+
         <IconGroup>
           <DesktopIcons>
             <IconButton onClick={() => setCarrinhoAberto(true)}>
               <CartIcon>
                 🛒
                 {totalItens > 0 && (
-                  <CartBadge style={{ background: 'var(--cor-principal)' }}>
+                  <CartBadge style={{ background: "var(--cor-principal)" }}>
                     {totalItens}
                   </CartBadge>
                 )}
               </CartIcon>
             </IconButton>
           </DesktopIcons>
-          
-          <IconButton 
+
+          <IconButton
             onClick={() => setMenuAberto(true)}
-            style={{ display: 'block' }}
+            style={{ display: "block" }}
             className="mobile-only"
           >
             <MenuIcon>
-              <span style={{ background: 'var(--cor-texto)' }}></span>
-              <span style={{ background: 'var(--cor-texto)' }}></span>
-              <span style={{ background: 'var(--cor-texto)' }}></span>
+              <span style={{ background: "var(--cor-texto)" }}></span>
+              <span style={{ background: "var(--cor-texto)" }}></span>
+              <span style={{ background: "var(--cor-texto)" }}></span>
             </MenuIcon>
           </IconButton>
         </IconGroup>
@@ -143,18 +132,21 @@ function Header() {
 
       {/* Menu Lateral Mobile */}
       <MenuOverlay $aberto={menuAberto} onClick={() => setMenuAberto(false)} />
-      <MenuLateral $aberto={menuAberto} style={{ background: 'var(--cor-card)' }}>
-        <MenuCabecalho style={{ borderBottom: '1px solid var(--cor-borda)' }}>
-          <MenuFechar 
+      <MenuLateral
+        $aberto={menuAberto}
+        style={{ background: "var(--cor-card)" }}
+      >
+        <MenuCabecalho style={{ borderBottom: "1px solid var(--cor-borda)" }}>
+          <MenuFechar
             onClick={() => setMenuAberto(false)}
-            style={{ color: 'var(--cor-texto)' }}
+            style={{ color: "var(--cor-texto)" }}
           >
             ×
           </MenuFechar>
         </MenuCabecalho>
-        
+
         <MenuItens>
-          <MenuCategorias 
+          <MenuCategorias
             onSelecionarCategoria={(id) => {
               handleSelecionarCategoria(id);
               setMenuAberto(false);
@@ -165,9 +157,9 @@ function Header() {
       </MenuLateral>
 
       {/* Carrinho */}
-      <Carrinho 
-        aberto={carrinhoAberto} 
-        onFechar={() => setCarrinhoAberto(false)} 
+      <Carrinho
+        aberto={carrinhoAberto}
+        onFechar={() => setCarrinhoAberto(false)}
       />
     </>
   );
